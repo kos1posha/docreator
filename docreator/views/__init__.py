@@ -1,0 +1,5 @@
+from .create_document_instance_view import CreateDocumentInstanceView
+from .delete_document_instance_view import DeleteDocumentInstanceView
+from .create_document_template_view import CreateDocumentTemplateView
+from .delete_document_template_view import DeleteDocumentTemplateView
+from .index_view import IndexView

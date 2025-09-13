@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_styles %}
+  <link href="{% static 'core/css/base.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="{% static 'core/js/base.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+  <header class="navbar navbar-expand-md fixed-top bg-info py-1">
+    <div class="container px-4 px-lg-5">
+      <a class="navbar-brand" href="{% url 'docreator:index' %}">
+        <img src="{% static 'core/images/logo-full.png' %}" alt="DOCREATOR" height="40px">
+      </a>
+      <button class="navbar-toggler p-0 border-0" type="button" id="offcanvasToggler" aria-label="Скрыть/раскрыть навигацию">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <nav class="navbar-collapse offcanvas-collapse container">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <form method="post" action="{% url 'docreator:index' %}" enctype="multipart/form-data" id="navbar-file-choose-form">
+              {% csrf_token %}
+              <input class="d-none" type="file" accept=".docx" name="file" id="navbar-file-choose">
+              <label class="nav-link link-dark fw-semibold cursor-pointer" for="navbar-file-choose">Выбрать файл</label>
+            </form>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link link-dark fw-semibold cursor-pointer" data-bs-toggle="modal" data-bs-target="#instructions-modal">
+              Инструкция
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link link-success fw-semibold" href="{% url 'admin:index' %}">
+              Админка
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link link-danger fw-semibold" href="{% url 'api:root' %}">
+              Апишка
+            </a>
+          </li>
+        </ul>
+        <hr class="d-md-none">
+        <ul class="navbar-nav ms-auto">
+          {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <button class="nav-link link-dark fw-semibold" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ user.username }} <small><small>ᐯ</small></small>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{% url 'users:profile' %}">Профиль</a></li>
+                <li><a class="dropdown-item text-danger" href="{% url 'users:sign-out' %}">Выйти</a></li>
+              </ul>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link text-info-emphasis fw-semibold" href="{% url 'users:sign-up' %}">
+                Регистрация
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-info-emphasis fw-semibold" href="{% url 'users:sign-in' %}">
+                Войти
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+        <hr class="d-md-none">
+      </nav>
+    </div>
+  </header>
+  {% block content %}{% endblock %}
+  {% block modal %}
+    <div class="modal fade" id="instructions-modal" tabindex="-1" aria-labelledby="instructions-modal-label" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen-sm-down">
+        <div class="modal-content">
+          <div class="modal-header bg-info-subtle">
+            <h1 class="modal-title fs-5" id="instructions-modal-label">Инструкция</h1>
+            <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+          </div>
+          <div class="modal-body">
+            Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt, explicabo. Nemo enim ipsam voluptatem, quia voluptas sit, aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos, qui ratione voluptatem sequi nesciunt, neque porro quisquam est, qui dolorem ipsum, quia dolor sit, amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt, ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit, qui in ea voluptate velit esse, quam nihil molestiae consequatur, vel illum, qui dolorem eum fugiat, quo voluptas nulla pariatur? At vero eos et accusamus et iusto odio dignissimos ducimus, qui blanditiis praesentium
+            voluptatum
+            deleniti atque corrupti, quos dolores et quas molestias excepturi sint, obcaecati cupiditate non provident, similique sunt in culpa, qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio, cumque nihil impedit, quo minus id, quod maxime placeat, facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet, ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+          </div>
+          <div class="modal-footer">
+            <form method="post" action="{% url 'docreator:index' %}" enctype="multipart/form-data" id="instruction-file-choose-form">
+              {% csrf_token %}
+              <input class="d-none" type="file" accept=".docx" name="file" id="instruction-file-choose">
+              <label class="btn btn-warning cursor-pointer" for="instruction-file-choose">Выбрать файл</label>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endblock %}
+{% endblock %}

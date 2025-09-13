@@ -1,0 +1,144 @@
+{% extends 'base_n.html' %}
+{% load static %}
+
+{% block title %}Новый шаблон{% endblock %}
+
+{% block extra_scripts %}
+  {{ block.super }}
+  <script src="{% static 'core/js/create_template.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+  <form method="post" action="{% url 'docreator:index' %}" enctype="multipart/form-data" id="switch-file-choose-form">
+    {% csrf_token %}
+    <div class="bg-info-subtle pb-4">
+      <div class="container px-4 px-lg-5 pt-2">
+        <h1 class="d-inline-block">Добавление шаблона <span class="d-none d-md-inline">документа</span></h1>
+        <div class="mt-2">
+          <div class="input-group">
+            <span class="col input-group-text overflow-auto" id="file-name">{{ form.filename }}</span>
+            <input class="d-none" type="file" accept=".docx" name="file" id="switch-file-choose" aria-describedby="file-label file-name file-help">
+            <label class="col-auto btn btn-primary mt-0" for="switch-file-choose">Изменить <span class="d-none d-sm-inline">файл</span></label>
+          </div>
+          <small class="text-secondary d-none d-sm-block small ms-1">Убедитесь, что были обнаружены все выделенные вами поля. <span class="d-none d-lg-inline">Если это не так, перепроверьте файл и повторите попытку.</span></small>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="container px-4 px-lg-5 pt-2">
+    {% if form.template_fields %}
+      <form method="post" action="{% url 'docreator:create-template' %}" id="create-document-template-form">
+        {% csrf_token %}        <h5 class="mt-3">Общая информация</h5>
+        <div class="form-floating mt-3">
+          <input class="form-control" type="text" id="name" name="{{ form.name.name }}" placeholder="Название шаблона">
+          <label for="name">Название шаблона</label>
+        </div>
+        <div class="form-floating mt-2">
+          <textarea class="form-control" name="{{ form.description.name }}" id="description" placeholder="Описание"></textarea>
+          <label for="description">Описание</label>
+        </div>
+        <div class="py-3">
+          <h5 class="d-inline d-md-block">Настройка полей</h5>
+          <a class="float-end link text-decoration-none d-inline d-sm-none small mt-1" data-bs-toggle="modal" data-bs-target="#field-details-modal">
+            Подробнее
+          </a>
+          <small class="text-secondary d-none d-sm-block">
+            Вы можете настроить каждое поле: добавить ему подпись, тип, вспомогательный текст и значение по умолчанию.
+            <span class="d-none d-md-inline">От типа поля зависит диапазон его допустимых значений.</span>
+            <a class="link text-decoration-none cursor-pointer" data-bs-toggle="modal" data-bs-target="#field-details-modal">Подробнее...</a>
+          </small>
+          <div class="row justify-content-start mx-0 px-0">
+            {% for field in form.template_fields %}
+              <div class="col-12 col-md-6 col-xl-4 px-1">
+                <div class="card rounded-0 mt-3 mx-0">
+                  <div class="card-header bg-primary-subtle rounded-0 px-4 py-3">
+                    <div class="row">
+                      <div class="col-12 col-sm mx-auto px-1">
+                        <input class="form-control form-control-sm" placeholder="&#123;&#123; {{ field.name_in_template }} &#125;&#125;" maxlength="{{ field.label.max_length }}" type="text" name="{{ field.name_in_template }}__label" id="{{ field.name_in_template }}__label">
+                      </div>
+                      <div class="col col-sm-auto mt-2 mt-sm-0 mx-auto px-1">
+                        <select class="form-select form-select-sm" name="{{ field.name_in_template }}__type" id="{{ field.name_in_template }}__type" onchange="setDataType('{{ field.name_in_template }}__default', '{{ field.name_in_template }}__type')">
+                          {% for id, choice in field.type.choices %}
+                            <option value="{{ id }}"{% if id == field.type.initial %} selected{% endif %}>{{ choice }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="col-auto mt-2 mt-sm-0 mx-0 px-1">
+                        <button class="btn btn-square border-secondary border-opacity-25 bg-white focus-ring" data-bs-toggle="collapse" type="button" role="button" aria-expanded="false" href="#{{ field.name_in_template }}_collapse" aria-controls="{{ field.name_in_template }}_collapse">i</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="collapse" id="{{ field.name_in_template }}_collapse">
+                    <div class="card-body pt-1 pb-3">
+                      <div class="row">
+                        <div class="col-12">
+                          <div class="form-floating mt-3">
+                            <input class="form-control" maxlength="{{ field.help_text.max_length }}" type="text" name="{{ field.name_in_template }}__help_text" id="{{ field.name_in_template }}__help_text" placeholder="Вспомогательный текст">
+                            <label for="{{ field.name_in_template }}__helptext">Вспомогательный текст</label>
+                          </div>
+                          <div class="form-floating mt-2">
+                            <input class="form-control" maxlength="{{ field.default.max_length }}" type="text" name="{{ field.name_in_template }}__default" id="{{ field.name_in_template }}__default" placeholder="Значение по умолчанию">
+                            <label for="{{ field.name_in_template }}__helptext">Значение по умолчанию</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <div class="offset-0 col-12 offset-md-3 col-md-6 offset-xl-4 col-xl-4 pt-3 px-1">
+            <a class="col-12 btn btn-primary" data-bs-toggle="modal" data-bs-target="#create-template-confirm-modal">
+              Создать шаблон
+            </a>
+          </div>
+        </div>
+      </form>
+      </div>
+    {% else %}
+      <h5 class="text-danger mt-3">Поля отсутствуют</h5>
+      <span>
+        Без полей невозможно создать шаблон, так как документ нечем заполнять. Убедитесь, что вы правильно выделили поля внутри файла шаблона. Чтобы узнать,
+        как это сделать, ознакомьтесь с <a class="link-primary text-decoration-none fw-semibold cursor-pointer" data-bs-toggle="modal" data-bs-target="#instructionsModal">инструкцией</a>.
+        Если вы уверены, что поля выделены правильно, свяжитесь с нами и опишите ошибку.
+      </span>
+    {% endif %}
+{% endblock %}
+{% block modal %}
+  {{ block.super }}
+  <div class="modal fade" id="field-details-modal" tabindex="-1" aria-labelledby="field-details-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen-sm-down">
+      <div class="modal-content">
+        <div class="modal-header bg-primary-subtle">
+          <h1 class="modal-title fs-5" id="field-details-modal-label">Настройка полей шаблона</h1>
+          <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+          Тут будет подробнее про поля
+        </div>
+        <div class="modal-footer">
+          <input class="btn btn-outline-danger" type="button" value="Закрыть" data-bs-dismiss="modal" aria-label="Закрыть">
+          <input class="btn btn-primary" type="button" value="Понятно">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="create-template-confirm-modal" tabindex="-1" aria-labelledby="create-template-confirm-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen-sm-down">
+      <div class="modal-content">
+        <div class="modal-header bg-primary-subtle">
+          <h1 class="modal-title fs-5" id="create-template-confirm-label">Подтвердите действие на сайте</h1>
+          <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+          Перед созданием шаблона мы рекомендуем убедиться, что все поля заполнены правильно. В случае чего вы сможете изменить их в профиле.
+        </div>
+        <div class="modal-footer">
+          <input class="btn btn-outline-danger" type="button" value="Отмена" data-bs-dismiss="modal">
+          <input class="btn btn-primary" type="submit" form="create-document-template-form" value="Продолжить">
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

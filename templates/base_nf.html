@@ -1,0 +1,47 @@
+{% extends 'base_n.html' %}
+{% load static %}
+
+{% block after_body %}
+  <footer class="d-block border-top bg-light py-3 mt-auto">
+    <div class="container d-flex flex-wrap align-items-center px-4 px-lg-5">
+      <a class="col-12 col-sm-4 nav-link link-secondary pt-1" href="https://github.com/kos1posha">
+        DOCREATOR © 2023
+      </a>
+      <a class="nav-link link-secondary pt-0 pe-0 ms-sm-auto" href="" data-bs-toggle="modal" data-bs-target="#about-modal">
+        О проекте
+      </a>
+      <a class="nav-link link-secondary pt-0 pe-0 ms-3" href="" data-bs-toggle="modal" data-bs-target="#security-modal">
+        Безопасность
+      </a>
+    </div>
+  </footer>
+{% endblock %}
+{% block modal %}
+  {{ block.super }}
+  <div class="modal fade" id="about-modal" tabindex="-1" aria-labelledby="about-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen-sm-down">
+      <div class="modal-content">
+        <div class="modal-header bg-secondary-subtle">
+          <h1 class="modal-title fs-5" id="about-modal-label">О проекте</h1>
+          <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+          Тут будет про этот проект и про меня
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="security-modal" tabindex="-1" aria-labelledby="security-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen-sm-down">
+      <div class="modal-content">
+        <div class="modal-header bg-secondary-subtle">
+          <h1 class="modal-title fs-5" id="security-modal-label">Безопасность</h1>
+          <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+          Тут будет про сохранность данных
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

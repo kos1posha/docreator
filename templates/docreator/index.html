@@ -1,0 +1,49 @@
+{% extends 'base_nf.html' %}
+{% load static %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block extra_scripts %}
+  {{ block.super }}
+  <script src="{% static 'core/js/index.js' %}"></script>
+{% endblock %}
+
+{% block remove-minh-100 %}{% endblock %}
+
+{% block content %}
+  <div class="bg-info-subtle pb-4">
+    <div class="container px-4 px-lg-5 pt-2">
+      <h1>Создание <span class="d-none d-md-inline-block">заполняемых шаблонов</span><span class="d-md-none">документов</span></h1>
+      <div class="row">
+        <div class="offset-3 col-6 offset-md-0 col-md-3 col-xl-2 pt-0 pt-md-3 pt-lg-0">
+          <img src="{% static 'core/images/logo-small.png' %}" width="100%" alt="">
+        </div>
+        <div class="col-12 col-md-9 col-xl-10">
+          <p class="text-secondary pt-sm-1 pt-md-0 pt-lg-4">
+            <span class="text-info">DOCREATOR</span>&nbsp;&nbsp;—&nbsp;&nbsp;сервис для создания шаблонов word-файлов, которые удобно заполнять и отслеживать.
+            Вам лишь надо немного изменить ваш документ, загрузить его нам и настроить заполняемые поля. Чтобы начать, ознакомьтесь с
+            <a class="text-decoration-none" href="#" data-bs-toggle="modal" data-bs-target="#instructions-modal">инструкцией</a>,
+            нажмите на кнопку ниже и выберите файл шаблона на вашем компьютере.
+          </p>
+        </div>
+      </div>
+    </div>
+    <form class="offset-4 col-4 text-center" method="post" enctype="multipart/form-data" id="file-choose-form">
+      {% csrf_token %}
+      <input class="d-none" type="file" accept=".docx" name="file" id="file-choose">
+      <label class="btn btn-primary p-2 p-md-3 mt-0" for="file-choose">Выбрать файл</label>
+    </form>
+  </div>
+  <div class="d-none d-md-block ">
+    <div class="container px-4 px-lg-5 pt-2">
+      <h1>Docreator Desktop</h1>
+      <img class="offset-4 col-4" src="{% static 'core/images/deskshot-placeholder.png' %}" width="100%" alt="">
+    </div>
+    <div class="bg-info-subtle mt-2 mb-3">
+      <div class="container px-2 px-lg-5">
+        🪟 docreator-desktop-1.0.0.0.zip
+        <a class="text-primary text-decoration-none float-end" href="">Скачать</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
